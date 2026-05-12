@@ -1,15 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Products from "./pages/ProductPage";
-function App() {
+import ProductPage from "./pages/ProductPage";
+function App({ products }) {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={<Products />}
-        />
-      </Routes>
-    </BrowserRouter>
+    <div>
+      <ProductPage products={products} />
+    </div>
   );
 }
 
