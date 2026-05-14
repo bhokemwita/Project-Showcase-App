@@ -13,11 +13,8 @@
     "json-server": "^0.17.4",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-<<<<<<< HEAD
-    "react-router": "^7.15.0"
-=======
+    "react-router": "^7.15.0",
     "react-router-dom": "^7.15.0"
->>>>>>> 9abf09a8c481f8f0ea98cc897d8fa2a9d904c27c
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
