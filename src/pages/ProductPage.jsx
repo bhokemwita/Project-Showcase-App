@@ -18,7 +18,7 @@ function ProductPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Get unique categories
+  // Geting categories
   const categories = [...new Set(products.map(product => product.category))];
 
   // Filter products

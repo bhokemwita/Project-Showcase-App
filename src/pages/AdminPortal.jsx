@@ -48,7 +48,6 @@ function AdminPortal() {
         stock: product.stock?.toString() || '',
         image: product.image || ''
       })
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     function handleChange(e) {
@@ -207,23 +206,13 @@ function AdminPortal() {
 
             {/* Content */}
             <div className="p-5">
-
-                {/* Product Title */}
                 <h2 className="text-2xl font-bold mb-2">{product?.title}</h2>
-
-                {/* Category */}
                 <p className="text-gray-500 mb-3">{product?.category}</p>
-
-                {/* Description */}
                 <p className="text-gray-600 mb-4">{product?.description}</p>
-
-                {/* Stock */}
                 <div className="flex justify-between items-center mb-4">
                     <span className="font-semibold">Stock:</span>
                     <span>{product?.stock || 0}</span>
                 </div>
-
-                {/* Stock Badge */}
                 <div className="mb-5">
                     <span
                         className={`px-3 py-1 rounded-full text-white text-sm ${(product.stock || 0) === 0
