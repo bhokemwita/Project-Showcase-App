@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Navbar from '../components/Navbar';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +32,8 @@ const ContactUs = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="contact-container">
       <div className="contact-wrapper">
         {/* Header Section */}
@@ -373,6 +376,7 @@ const ContactUs = () => {
         }
       `}</style>
     </div>
+    </>
   );
 };
 
