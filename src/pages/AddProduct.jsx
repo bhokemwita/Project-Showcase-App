@@ -3,10 +3,17 @@ import { useState } from "react"
 function AddProduct() {
 
   const [formData, setFormData] = useState({
-    name: "",
+    title: "",
+    price: "",
+    category: "",
+    brand: "",
+    stock: "",
+    rating: "",
+    image: "",
     description: "",
-    origin: "",
-    price: ""
+    status: "",
+    sku: "",
+    discount: ""
   })
 
   function handleChange(e) {
@@ -16,7 +23,7 @@ function AddProduct() {
   function handleSubmit(e) {
     e.preventDefault()
 
-    fetch("http://localhost:3000/coffee", {
+    fetch("http://localhost:3000/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData)
@@ -24,7 +31,7 @@ function AddProduct() {
       .then(res => res.json())
       .then(data => {
         alert("Product added successfully!")
-        setFormData({ name: "", description: "", origin: "", price: "" })
+        setFormData({ title: "", price: "", category: "", brand: "", stock: "", rating: "", image: "", description: "", status: "", sku: "", discount: "" })
       })
   }
 
@@ -32,34 +39,40 @@ function AddProduct() {
     <div className="form-container">
       <h2>Add New Product</h2>
       <form onSubmit={handleSubmit}>
-        <label>Product Name</label>
-        <input
-          name="name"
-          placeholder="e.g. Vanilla Bean"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <label>Description</label>
-        <input
-          name="description"
-          placeholder="e.g. Medium roast, nutty flavor"
-          value={formData.description}
-          onChange={handleChange}
-        />
-        <label>Origin</label>
-        <input
-          name="origin"
-          placeholder="e.g. Colombia"
-          value={formData.origin}
-          onChange={handleChange}
-        />
+
+        <label>Title</label>
+        <input name="title" placeholder="e.g. Nike Air Max" value={formData.title} onChange={handleChange} />
+
         <label>Price</label>
-        <input
-          name="price"
-          placeholder="e.g. 10.00"
-          value={formData.price}
-          onChange={handleChange}
-        />
+        <input name="price" placeholder="e.g. 120" value={formData.price} onChange={handleChange} />
+
+        <label>Category</label>
+        <input name="category" placeholder="e.g. Shoes" value={formData.category} onChange={handleChange} />
+
+        <label>Brand</label>
+        <input name="brand" placeholder="e.g. Nike" value={formData.brand} onChange={handleChange} />
+
+        <label>Stock</label>
+        <input name="stock" placeholder="e.g. 14" value={formData.stock} onChange={handleChange} />
+
+        <label>Rating</label>
+        <input name="rating" placeholder="e.g. 4.8" value={formData.rating} onChange={handleChange} />
+
+        <label>Image URL</label>
+        <input name="image" placeholder="e.g. https://picsum.photos/500/300" value={formData.image} onChange={handleChange} />
+
+        <label>Description</label>
+        <input name="description" placeholder="e.g. Premium running sneakers" value={formData.description} onChange={handleChange} />
+
+        <label>Status</label>
+        <input name="status" placeholder="e.g. active" value={formData.status} onChange={handleChange} />
+
+        <label>SKU</label>
+        <input name="sku" placeholder="e.g. NK-AM-001" value={formData.sku} onChange={handleChange} />
+
+        <label>Discount</label>
+        <input name="discount" placeholder="e.g. 10" value={formData.discount} onChange={handleChange} />
+
         <button type="submit">Add Product</button>
       </form>
     </div>
