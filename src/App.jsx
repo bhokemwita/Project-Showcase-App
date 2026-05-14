@@ -1,9 +1,8 @@
-<<<<<<< HEAD
-import React from "react";
-import {Route, Routes} from "react-router-dom";
-import {Home} from "./pages/Home";
+// import React from "react";
+import {BrowserRouter as Route, Routes} from "react-router-dom";
+// import {Home} from "./pages/Home";
 import {About} from "./pages/About";
-import {Landing} from "./pages/Landing";
+// import {Landing} from "./pages/Landing";
 import {ProductProvider} from "./context/ProductContext";
 import {AdminPortal} from "./pages/AdminPortal";
 import './App.css';
@@ -13,8 +12,8 @@ function App() {
     <ProductProvider>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/home" element={<Home />} />
+          {/* <Route path="/" element={<Landing />} /> */}
+          {/* <Route path="/home" element={<Home />} /> */}
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<AdminPortal />} />
         </Routes>
@@ -25,15 +24,13 @@ function App() {
 }
 export default App;
 
-=======
-import ProductPage from "./pages/ProductPage";
-function App({ products }) {
-  return (
-    <div>
-      <ProductPage products={products} />
-    </div>
-  );
-}
+// import ProductPage from "./pages/ProductPage";
+// function App({ products }) {
+//   return (
+//     <div>
+//       <ProductPage products={products} />
+//     </div>
+//   );
+// }
 
-export default App;
->>>>>>> 9abf09a8c481f8f0ea98cc897d8fa2a9d904c27c
+// export default App;

@@ -1,208 +1,477 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Routes, Route, useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react'
 
-// Sub-components for admin portal
-const AdminDashboard = () => (
-  <div>
-    <h2>Dashboard</h2>
-    <div className="stats">
-      <div className="stat">
-        <span className="stat-number">1,234</span>
-        <span className="stat-label">Users</span>
-      </div>
-      <div className="stat">
-        <span className="stat-number">567</span>
-        <span className="stat-label">Orders</span>
-      </div>
-      <div className="stat">
-        <span className="stat-number">$45.2K</span>
-        <span className="stat-label">Revenue</span>
-      </div>
-    </div>
-  </div>
-);
+export function AdminPortal({ product, onDelete, length }) {
+    const [price, setPrice] = useState(product.price);
+    const [array, setArray] = useState(newProductArray)
+    const CatRef = useRef("");
+    const NameRef = useRef("");
+    const PriceRef = useRef("");
+    const DesRef = useRef("");
+    const ImageRef = useRef("");
+    const StockRef = useRef("");
 
-const AdminUsers = () => (
-  <div>
-    <h2>User Management</h2>
-    <ul className="services-list">
-      <li>Alice Johnson - alice@example.com</li>
-      <li>Bob Smith - bob@example.com</li>
-      <li>Carol Davis - carol@example.com</li>
-      <li>David Wilson - david@example.com</li>
-    </ul>
-  </div>
-);
+    // Example Product Object inside an Array
+    let newProductArray = [
+        {
+            id: length + 1,
+            title: "Classic Black Hoodie",
+            price: 45.99,
+            description: "Premium oversized hoodie for everyday wear.",
+            category: "men's clothing",
+            image: "https://i.pravatar.cc",
+            stock: 15
+        }
+    ]
 
-const AdminProducts = () => (
-  <div>
-    <h2>Product Management</h2>
-    <ul className="services-list">
-      <li>Blue Theme Package - $49.99</li>
-      <li>Cyan UI Kit - $29.99</li>
-      <li>Ocean Animation Pack - $89.99</li>
-    </ul>
-  </div>
-);
+    // Stock Status
+    function stockStatus() {
 
-const AdminPortal = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const navigate = useNavigate();
+        if ((product.stock || 0) === 0) {
+            return "Out of Stock";
+        }
 
-  // Check for existing session
-  useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (token === 'authenticated') {
-      setIsLoggedIn(true);
+        if ((product.stock || 0) <= 10) {
+            return "Low Stock";
+        }
+
+        return "In Stock";
     }
-  }, []);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Demo authentication
-    if (credentials.username === 'admin' && credentials.password === 'admin123') {
-      setIsLoggedIn(true);
-      localStorage.setItem('adminToken', 'authenticated');
-      setActiveTab('dashboard');
-    } else {
-      alert('Invalid credentials!\nUse: admin / admin123');
+    //Edit Form 
+
+    function handleEdit(){
+        const handleSubmit = (event) => {
+            console.log(event.target.value)
+        }
+        return(
+            <form
+                            onSubmit={handleSubmit}
+                            className="flex flex-col gap-3 mb-5"
+                        >
+
+                            <label>Category</label>
+                            <input
+                                type="text"
+                                name="category"
+                                className="border p-2 rounded"
+                                placeholder={product.category}
+                            />
+
+                            <label>Name of Product</label>
+                            <input
+                                type="text"
+                                name="title"
+                                className="border p-2 rounded"
+                                placeholder={product.title}
+                            />
+
+                            <label>Price of Product</label>
+                            <input
+                                type="number"
+                                name="price"
+                                className="border p-2 rounded"
+                                placeholder={product.price}
+                            />
+
+                            <label>Description of Product</label>
+                            <input
+                                type="text"
+                                name="description"
+                                className="border p-2 rounded"
+                                placeholder={product.description}
+                            />
+
+                            <label>Image URL</label>
+                            <input
+                                type="text"
+                                name="image"
+                                className="border p-2 rounded"
+                                placeholder={product.image}
+                            />
+
+                            <label>Stock</label>
+                            <input
+                                type="number"
+                                name="stock"
+                                className="border p-2 rounded"
+                                placeholder={product.stock}
+                            />
+
+                            <button
+                                type="submit"
+                                className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
+                            >
+                                Save Changes
+                            </button>
+
+                        </form>
+        )
     }
-  };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('adminToken');
-    setCredentials({ username: '', password: '' });
-    navigate('/admin');
-  };
+    // Deletion from API
+    async function handleDelete() {
 
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
+        if (!window.confirm(`Are you sure you want to delete ${product.title}?`)) {
+            return;
+        }
 
-  if (!isLoggedIn) {
+        try {
+
+            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            let data = await response.json();
+
+            console.log("Deleted from server:", data);
+
+            onDelete(product.id);
+
+        } catch (error) {
+
+            console.error("Failed to delete product:", error);
+            alert("Could not delete product. Please try again.");
+        }
+    }
+
+    // Adding Product to API
+    async function addProduct() {
+
+        let newObject = {
+            category : CatRef,
+            title: NameRef,
+            price: PriceRef,
+            description: DesRef,
+            image: ImageRef,
+            stock: StockRef,
+        }
+            newProductArray.push({newObject})        
+
+        let newProduct = array[0]
+
+        try {
+
+            let response = await fetch(`https://fakestoreapi.com/products/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newProduct)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            let data = await response.json();
+            setArray([])
+            
+
+            console.log(data)
+
+        } catch (error) {
+
+            console.error(error);
+        }
+
+        return(
+            <form
+                            onSubmit={addProduct}
+                            className="flex flex-col gap-3 mb-5"
+                        >
+
+                            <label>Category</label>
+                            <input
+                                type="text"
+                                name="category"
+                                ref={CatRef}
+                                className="border p-2 rounded"
+                            />
+
+                            <label>Name of Product</label>
+                            <input
+                                type="text"
+                                name="title"
+                                ref={NameRef}
+                                className="border p-2 rounded"
+                            />
+
+                            <label>Price of Product</label>
+                            <input
+                                type="number"
+                                name="price"
+                                ref={PriceRef}
+                                className="border p-2 rounded"
+                            />
+
+                            <label>Description of Product</label>
+                            <input
+                                type="text"
+                                name="description"
+                                ref={DesRef}
+                                className="border p-2 rounded"
+                            />
+
+                            <label>Image URL</label>
+                            <input
+                                type="text"
+                                name="image"
+                                ref={ImageRef}
+                                className="border p-2 rounded"
+                            />
+
+                            <label>Stock</label>
+                            <input
+                                type="number"
+                                name="stock"
+                                ref={StockRef}
+                                className="border p-2 rounded"
+                            />
+
+                            <button
+                                type="submit"
+                                className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
+                            >
+                                Save Changes
+                            </button>
+
+                        </form>
+        )
+    }
+
+    // Edit Product
+    async function editProduct() {
+
+        try {
+
+            let updatedProduct = {
+                ...product,
+                price: price
+            }
+
+            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedProduct)
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`)
+            }
+
+            let data = await response.json()
+
+            console.log("Updated Product:", data)
+
+        } catch (error) {
+
+            console.error(error)
+        }
+    }
+
     return (
-      <div className="page-container">
-        <div className="page-card">
-          <h1>🔐 Admin Portal</h1>
-          <p>Please login to access the administration dashboard.</p>
-          <form className="contact-form" onSubmit={handleLogin}>
-            <input 
-              type="text" 
-              name="username"
-              placeholder="Username" 
-              value={credentials.username}
-              onChange={handleChange}
-              required 
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+
+            {/* Product Image */}
+            <img
+                src={product.image}
+                alt={product.title}
+                className="w-full h-60 object-cover"
             />
-            <input 
-              type="password" 
-              name="password"
-              placeholder="Password" 
-              value={credentials.password}
-              onChange={handleChange}
-              required 
-            />
-            <button type="submit">Login</button>
-          </form>
-          <div style={{ 
-            marginTop: '1rem', 
-            padding: '0.8rem', 
-            background: '#e0f2fe', 
-            borderRadius: '8px',
-            fontSize: '0.85rem'
-          }}>
-            <strong>Demo Credentials:</strong><br />
-            Username: admin<br />
-            Password: admin123
-          </div>
+
+            {/* Content */}
+            <div className="p-5">
+
+                {/* Product Title */}
+                <h2 className="text-2xl font-bold mb-2">
+                    {product.title}
+                </h2>
+
+                {/* Category */}
+                <p className="text-gray-500 mb-3">
+                    {product.category}
+                </p>
+
+                {/* Description */}
+                <p className="text-gray-600 mb-4">
+                    {product.description}
+                </p>
+
+                {/* Stock */}
+                <div className="flex justify-between items-center mb-4">
+                    <span className="font-semibold">
+                        Stock:
+                    </span>
+
+                    <span>{product.stock || 0}</span>
+                </div>
+
+                {/* Stock Badge */}
+                <div className="mb-5">
+                    <span
+                        className={`px-3 py-1 rounded-full text-white text-sm ${(product.stock || 0) === 0
+                            ? "bg-red-500"
+                            : (product.stock || 0) <= 10
+                                ? "bg-yellow-500"
+                                : "bg-green-500"
+                            }`}
+                    >
+                        {stockStatus()}
+                    </span>
+                </div>
+
+                {/* Price Update */}
+                <div className="flex gap-2 mb-5">
+                    <input
+                        type="number"
+                        value={price}
+                        onChange={(e) =>
+                            setPrice(e.target.value)
+                        }
+                        className="border border-gray-300 rounded-lg px-3 py-2 w-full outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+
+                    <button
+                        onClick={editProduct}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-lg transition"
+                    >
+                        Update
+                    </button>
+                </div>
+
+                {/* Product Price */}
+                <h3 className="text-3xl font-bold text-indigo-600 mb-6">
+                    ${price}
+                </h3>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+
+                    <button 
+                    onClick={handleEdit}
+                    className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition">
+                        Edit
+                    </button>
+
+                    <button
+                        onClick={handleDelete}
+                        className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition"
+                    >
+                        Delete
+                    </button>
+
+                    <button
+                        onClick={addProduct}
+                        className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition">
+                        Add new Product
+                    </button>
+
+                </div>
+            </div>
         </div>
-      </div>
     );
-  }
+}
 
-  return (
-    <div className="page-container">
-      <div className="page-card" style={{ maxWidth: '900px' }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          marginBottom: '1.5rem',
-          flexWrap: 'wrap',
-          gap: '1rem'
-        }}>
-          <h1>👑 Admin Dashboard</h1>
-          <button onClick={handleLogout} className="back-home-btn" style={{ padding: '0.5rem 1.2rem' }}>
-            <i className="fas fa-sign-out-alt"></i> Logout
-          </button>
-        </div>
 
-        {/* Admin Navigation Tabs */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '0.5rem', 
-          marginBottom: '2rem',
-          borderBottom: '1px solid #bae6fd',
-          paddingBottom: '0.5rem'
-        }}>
-          <button 
-            onClick={() => setActiveTab('dashboard')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: activeTab === 'dashboard' ? '#0891b2' : 'transparent',
-              color: activeTab === 'dashboard' ? 'white' : '#0c4a6e',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
-          >
-            📊 Dashboard
-          </button>
-          <button 
-            onClick={() => setActiveTab('users')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: activeTab === 'users' ? '#0891b2' : 'transparent',
-              color: activeTab === 'users' ? 'white' : '#0c4a6e',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
-          >
-            👥 Users
-          </button>
-          <button 
-            onClick={() => setActiveTab('products')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: activeTab === 'products' ? '#0891b2' : 'transparent',
-              color: activeTab === 'products' ? 'white' : '#0c4a6e',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
-          >
-            📦 Products
-          </button>
-        </div>
+// Example fetch requests using useEffect
 
-        {/* Tab Content */}
-        {activeTab === 'dashboard' && <AdminDashboard />}
-        {activeTab === 'users' && <AdminUsers />}
-        {activeTab === 'products' && <AdminProducts />}
+/*
 
-        <div className="cta-section" style={{ marginTop: '2rem' }}>
-          <Link to="/" className="back-home-btn">← Return to Website</Link>
-        </div>
-      </div>
-    </div>
-  );
-};
+DELETE
 
-export default AdminPortal;
+useEffect(() => {
+
+    async function deleteProduct() {
+
+        try {
+
+            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
+                method: 'DELETE'
+            })
+
+            let data = await response.json()
+
+            console.log(data)
+
+        } catch(error) {
+
+            console.error(error)
+        }
+    }
+
+    deleteProduct()
+
+}, [])
+
+
+
+POST
+
+useEffect(() => {
+
+    async function addProduct() {
+
+        try {
+
+            let response = await fetch(`https://fakestoreapi.com/products`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sampleProducts[0])
+            })
+
+            let data = await response.json()
+
+            console.log(data)
+
+        } catch(error) {
+
+            console.error(error)
+        }
+    }
+
+    addProduct()
+
+}, [])
+
+
+
+PUT
+
+useEffect(() => {
+
+    async function updateProduct() {
+
+        try {
+
+            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...product,
+                    price: price
+                })
+            })
+
+            let data = await response.json()
+
+            console.log(data)
+
+        } catch(error) {
+
+            console.error(error)
+        }
+    }
+
+    updateProduct()
+
+}, [])
+
+*/
