@@ -1,11 +1,20 @@
-import { useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import ProductContext from "../context/Products/ProductContext";
-// import AdminPortal from "./AdminPortal"
 import ProductCard from "../components/ProductCard"
-
 
 function ProductPage() {
   const [products, setProducts] = useContext(ProductContext);
+
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
 
   // Delete product
@@ -32,6 +41,14 @@ function ProductPage() {
 
   return (
     <div className="p-6">
+      <div
+        className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`}
+        aria-hidden={!showSplash}
+      >
+        <div className="splash-copy">
+          <span>Products Page</span>
+        </div>
+      </div>
 
       {/* Page Title */}
       <h1 className="text-4xl font-bold mb-8">
@@ -42,19 +59,12 @@ function ProductPage() {
       <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
         {products.map((product) => (
-          <>
             <ProductCard
               key={product.id}
               product={product}
               onDelete={handleDelete}
               onUpdatePrice={handleUpdatePrice}
             />
-            {/* <AdminPortal
-              key={product.id}
-              product={product}
-              length={product.length}
-              onDelete={handleDelete} /> */}
-          </>
         ))}
 
       </div>

@@ -1,11 +1,15 @@
-import { useRef, useState } from 'react'
+import { useRef, useContext } from 'react'
 import { useNavigate } from 'react-router';
+import ProductContext from "../context/Products/ProductContext";
 
-function AdminPortal({ product, onDelete}) {
+function AdminPortal() {
+
+    const [products] = useContext(ProductContext);
+
+    // console.log(products)
 
     const navigate = useNavigate()
-    
-    const [price, setPrice] = useState(product.price);
+
     const CatRef = useRef("");
     const NameRef = useRef("");
     const PriceRef = useRef("");
@@ -13,94 +17,80 @@ function AdminPortal({ product, onDelete}) {
     const ImageRef = useRef("");
     const StockRef = useRef("");
 
-    // Stock Status
-    function stockStatus() {
-
-        if ((product.stock || 0) === 0) {
-            return "Out of Stock";
-        }
-
-        if ((product.stock || 0) <= 10) {
-            return "Low Stock";
-        }
-
-        return "In Stock";
-    }
-
     //Edit Form 
 
-    function handleEdit(){
+    function handleEdit() {
         const handleSubmit = (event) => {
             console.log(event.target.value)
         }
-        return(
+        return (
             <form
-                            onSubmit={handleSubmit}
-                            className="flex flex-col gap-3 mb-5"
-                        >
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-3 mb-5"
+            >
 
-                            <label>Category</label>
-                            <input
-                                type="text"
-                                name="category"
-                                className="border p-2 rounded"
-                                placeholder={product.category}
-                                ref={CatRef}
-                            />
+                <label>Category</label>
+                <input
+                    type="text"
+                    name="category"
+                    className="border p-2 rounded"
+                    placeholder={product.category}
+                    ref={CatRef}
+                />
 
-                            <label>Name of Product</label>
-                            <input
-                                type="text"
-                                name="title"
-                                className="border p-2 rounded"
-                                placeholder={product.title}
-                                ref={NameRef}
-                            />
+                <label>Name of Product</label>
+                <input
+                    type="text"
+                    name="title"
+                    className="border p-2 rounded"
+                    placeholder={product.title}
+                    ref={NameRef}
+                />
 
-                            <label>Price of Product</label>
-                            <input
-                                type="number"
-                                name="price"
-                                className="border p-2 rounded"
-                                placeholder={product.price}
-                                ref={PriceRef}
-                            />
+                <label>Price of Product</label>
+                <input
+                    type="number"
+                    name="price"
+                    className="border p-2 rounded"
+                    placeholder={product.price}
+                    ref={PriceRef}
+                />
 
-                            <label>Description of Product</label>
-                            <input
-                                type="text"
-                                name="description"
-                                className="border p-2 rounded"
-                                placeholder={product.description}
-                                ref={DesRef}
-                            />
+                <label>Description of Product</label>
+                <input
+                    type="text"
+                    name="description"
+                    className="border p-2 rounded"
+                    placeholder={product.description}
+                    ref={DesRef}
+                />
 
-                            <label>Image URL</label>
-                            <input
-                                type="text"
-                                name="image"
-                                className="border p-2 rounded"
-                                placeholder={product.image}
-                                ref={ImageRef}
-                            />
+                <label>Image URL</label>
+                <input
+                    type="text"
+                    name="image"
+                    className="border p-2 rounded"
+                    placeholder={product.image}
+                    ref={ImageRef}
+                />
 
-                            <label>Stock</label>
-                            <input
-                                type="number"
-                                name="stock"
-                                className="border p-2 rounded"
-                                placeholder={product.stock}
-                                ref={StockRef}
-                            />
+                <label>Stock</label>
+                <input
+                    type="number"
+                    name="stock"
+                    className="border p-2 rounded"
+                    placeholder={product.stock}
+                    ref={StockRef}
+                />
 
-                            <button
-                                type="submit"
-                                className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
-                            >
-                                Save Changes
-                            </button>
+                <button
+                    type="submit"
+                    className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
+                >
+                    Save Changes
+                </button>
 
-                        </form>
+            </form>
         )
     }
 
@@ -167,40 +157,29 @@ function AdminPortal({ product, onDelete}) {
     }
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-
-            {/* Product Image */}
-            <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-60 object-cover"
-            />
+        <div>
+            <ul>
+                {products.map((product) => (
+                <li key={product.id}>
+            <img src={product?.image} alt={product?.title} className="w-full h-60 object-cover"/>
+            
 
             {/* Content */}
             <div className="p-5">
 
                 {/* Product Title */}
-                <h2 className="text-2xl font-bold mb-2">
-                    {product.title}
-                </h2>
+                <h2 className="text-2xl font-bold mb-2">{product?.title}</h2>
 
                 {/* Category */}
-                <p className="text-gray-500 mb-3">
-                    {product.category}
-                </p>
+                <p className="text-gray-500 mb-3">{product?.category}</p>
 
                 {/* Description */}
-                <p className="text-gray-600 mb-4">
-                    {product.description}
-                </p>
+                <p className="text-gray-600 mb-4">{product?.description}</p>
 
                 {/* Stock */}
                 <div className="flex justify-between items-center mb-4">
-                    <span className="font-semibold">
-                        Stock:
-                    </span>
-
-                    <span>{product.stock || 0}</span>
+                    <span className="font-semibold">Stock:</span>
+                    <span>{product?.stock || 0}</span>
                 </div>
 
                 {/* Stock Badge */}
@@ -211,22 +190,20 @@ function AdminPortal({ product, onDelete}) {
                             : (product.stock || 0) <= 10
                                 ? "bg-yellow-500"
                                 : "bg-green-500"
-                            }`}
-                    >
-                        {stockStatus()}
+                            }`}>
                     </span>
                 </div>
 
                 {/* Price Update */}
-                <div className="flex gap-2 mb-5">
-                    <input
+                 <div className="flex gap-2 mb-5">
+                    {/* <input
                         type="number"
-                        value={price}
+                        value={product.price}
                         onChange={(e) =>
                             setPrice(e.target.value)
                         }
                         className="border border-gray-300 rounded-lg px-3 py-2 w-full outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
+                    /> */}
 
                     <button
                         onClick={editProduct}
@@ -238,7 +215,7 @@ function AdminPortal({ product, onDelete}) {
 
                 {/* Product Price */}
                 <h3 className="text-3xl font-bold text-indigo-600 mb-6">
-                    ${price}
+                    ${product?.price}
                 </h3>
 
                 {/* Action Buttons */}
@@ -265,8 +242,11 @@ function AdminPortal({ product, onDelete}) {
 
                 </div>
             </div>
+        </li>
+            ))}
+            </ul>
         </div>
-    );
+        )
 }
 
 export default AdminPortal
