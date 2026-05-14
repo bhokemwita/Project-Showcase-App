@@ -1,12 +1,7 @@
 // import React from "react";
-<<<<<<< HEAD
 import {Route, Routes} from "react-router-dom";
-import {Home} from "./pages/Home";
-=======
-import {BrowserRouter , Route, Routes} from "react-router-dom";
 // import {Home} from "./pages/Home";
->>>>>>> refs/remotes/origin/main
-import {About} from "./pages/About";
+// import {About} from "./pages/About";
 // import {Landing} from "./pages/Landing";
 import {ProductProvider} from "./context/ProductContext";
 import {AdminPortal} from "./pages/AdminPortal";
@@ -19,7 +14,7 @@ function App() {
         <Routes>
           {/* <Route path="/" element={<Landing />} /> */}
           {/* <Route path="/home" element={<Home />} /> */}
-          <Route path="/about" element={<About />} />
+          {/* <Route path="/about" element={<About />} /> */}
           <Route path="/admin" element={<AdminPortal />} />
         </Routes>
       </div>
@@ -27,32 +22,31 @@ function App() {
   );
 } 
 
-function App() {
-  const [showSplash, setShowSplash] = useState(true);
+export default App
 
-  useEffect(() => {
-    if 
-    // will add code here
+// function App() {
+//   const [showSplash, setShowSplash] = useState(true);
+
+//   useEffect(() => {
+//     if 
+//     // will add code here
   
     
 
-<<<<<<< HEAD
-=======
-  return (
-    <BrowserRouter>
+//   return (
+//     <BrowserRouter>
       
-        <div className="app-shell">
-          <div className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`} aria-hidden={!showSplash}>
-            <div className="splash-copy">
-              <span>Commerce</span>
-              <span>Admin</span>
-            </div>
-          </div>
+//         <div className="app-shell">
+//           <div className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`} aria-hidden={!showSplash}>
+//             <div className="splash-copy">
+//               <span>Commerce</span>
+//               <span>Admin</span>
+//             </div>
+//           </div>
      
-    </BrowserRouter>
-  );
-}
+//     </BrowserRouter>
+//   );
+// }
 
-export default App;
+// export default App;
 
->>>>>>> refs/remotes/origin/main
