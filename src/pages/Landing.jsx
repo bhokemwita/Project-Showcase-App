@@ -1,30 +1,34 @@
-import {useState, useEffect} from 'react'
+// pages/Landing.jsx
+import { Link } from 'react-router-dom';
 
-function Landing() {
-  const [showSplash, setShowSplash] = useState(true);
-
- useEffect(() => {
-    // Splash on every load for 4 seconds
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 4000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
+export default function Landing() {
   return (
-      
-        <div className="app-shell">
-          <div className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`} aria-hidden={!showSplash}>
-            <div className="splash-copy">
-              <span>MESSAGE</span>
-              <span>HERE</span>
-            </div>
+    <>
+      <section className="hero">
+        <div className="hero-glow hero-glow-1" aria-hidden="true" />
+        <div className="hero-glow hero-glow-2" aria-hidden="true" />
+        <div className="hero-copy">
+         
+          <h1>123456789</h1>
+         
+          <div className="hero-actions">
+            <Link className="button button-secondary" to="/products">
+              Explore Products
+            </Link>
           </div>
-          </div>
-     
-  )
+        </div>
+      </section>
+
+      <section className="section feature-grid">
+        <article className="feature-card">
+          <h2>what we offer here!</h2>
+    
+        </article>
+        <article className="feature-card">
+          <h2>what we offer here!</h2>
+        
+        </article>
+      </section>
+    </>
+  );
 }
-
-export default Landing;
-
