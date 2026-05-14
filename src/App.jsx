@@ -1,14 +1,10 @@
 // import React from "react";
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { Routes, Route, NavLink } from "react-router-dom";
 import ProductPage from "./pages/ProductPage";
 import ContactUs from "./pages/Contact-Us";
 import Landing from "./pages/Landing";
-<<<<<<< HEAD
 import ProductProvider from "./context/Products/ProductProvider";
-=======
-// import ProductProvider from "./context/Products/ProductContext";
->>>>>>> refs/remotes/origin/main
 // import AdminPortal from "./pages/AdminPortal";
 import './App.css';
 
@@ -32,7 +28,7 @@ function App() {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-   
+
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 4000);
@@ -42,9 +38,9 @@ function App() {
 
   return (
     <>
-      
+
       <div className="app-shell">
-       
+
         <div
           className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`}
           aria-hidden={!showSplash}
@@ -65,15 +61,19 @@ function App() {
         </header>
 
         <main className="page-container">
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/products" element={<ProductPage />} />
-            <Route path="/about" element={<ContactUs />} />
-          </Routes>
+          <ProductProvider>
+            <div>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/products" element={<ProductPage />} />
+                <Route path="/about" element={<ContactUs />} />
+              </Routes>
+            </div>
+          </ProductProvider>
         </main>
 
         <footer className="app-footer">
-         FOOTER MESSAGE HERE
+          FOOTER MESSAGE HERE
         </footer>
       </div>
     </>

@@ -23,7 +23,7 @@ function AddProduct() {
   function handleSubmit(e) {
     e.preventDefault()
 
-    fetch("http://localhost:3000/products", {
+    fetch("https://fakestoreapi.com/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData)
