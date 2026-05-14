@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-import React from "react";
+// import React from "react";
 import {Route, Routes} from "react-router-dom";
 import {Home} from "./pages/Home";
 import {About} from "./pages/About";
@@ -24,15 +23,3 @@ function App() {
 }
 export default App;
 
-=======
-import ProductPage from "./pages/ProductPage";
-function App({ products }) {
-  return (
-    <div>
-      <ProductPage products={products} />
-    </div>
-  );
-}
-
-export default App;
->>>>>>> 9abf09a8c481f8f0ea98cc897d8fa2a9d904c27c
