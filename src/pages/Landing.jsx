@@ -1,27 +1,34 @@
-import {useState, useEffect} from 'react'
+// pages/Landing.jsx
+import { Link } from 'react-router-dom';
 
-function Landing() {
-  const [showSplash, setShowSplash] = useState(true);
-
-//   useEffect(() => {
-    
-//     setShowSplash
-
-//     // write code here 
-//   });
-  
+export default function Landing() {
   return (
-      
-        <div className="app-shell">
-          <div className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`} aria-hidden={!showSplash}>
-            <div className="splash-copy">
-              <span>Commerce</span>
-              <span>Admin</span>
-            </div>
+    <>
+      <section className="hero">
+        <div className="hero-glow hero-glow-1" aria-hidden="true" />
+        <div className="hero-glow hero-glow-2" aria-hidden="true" />
+        <div className="hero-copy">
+         
+          <h1>123456789</h1>
+         
+          <div className="hero-actions">
+            <Link className="button button-secondary" to="/products">
+              Explore Products
+            </Link>
           </div>
-          </div>
-     
-  )
-}
+        </div>
+      </section>
 
-export default Landing;
+      <section className="section feature-grid">
+        <article className="feature-card">
+          <h2>what we offer here!</h2>
+    
+        </article>
+        <article className="feature-card">
+          <h2>what we offer here!</h2>
+        
+        </article>
+      </section>
+    </>
+  );
+}
