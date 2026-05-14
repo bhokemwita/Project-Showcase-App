@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { productContext } from './ProductContext'
+import ProductContext from './ProductContext';
 
 const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
@@ -7,9 +7,9 @@ const ProductProvider = ({ children }) => {
 
     // Fetch products
     useEffect(() => {
-        async () => {
+        const fetchData = async () => {
             try{
-                let response = await fetch(`${API_URL}`)
+                let response = await fetch(API_URL)
                 if (!response.ok){
                     throw new Error (`HTTP error! Status: ${response.status}`)
                 }
@@ -21,26 +21,15 @@ const ProductProvider = ({ children }) => {
             }catch(error){
                 console.error(error)
             }
-            
         }
+        fetchData();
     }, []);
 
     return (
-        <productContext.Provider value={[products, setProducts]}>
+        <ProductContext.Provider value={[products, setProducts]}>
             {children}
-        </productContext.Provider>
+        </ProductContext.Provider>
     )
 }
 
 export default ProductProvider
-
-// useEffect(() => {
-//     const fetchData = async () => {
-//         try{
-//             let response = await fetch
-
-//         }catch(error){
-//             console.error(error)
-//         }
-//     }
-// })
