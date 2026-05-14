@@ -1,6 +1,5 @@
-
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react'
+import ProductPage from './ProductPage';
 
 export default function Landing() {
 
@@ -25,23 +24,7 @@ export default function Landing() {
           <span>Welcome</span>
         </div>
       </div>
-
-          <div className="hero-actions">
-            <Link className="button button-secondary" to="/products">
-              Explore Products
-            </Link>
-          </div>
-
-      <section className="section feature-grid">
-        <article className="feature-card">
-          <h2>what we offer here!</h2>
-
-        </article>
-        <article className="feature-card">
-          <h2>what we offer here!</h2>
-
-        </article>
-      </section>
+    <ProductPage />
     </>
   );
 }
