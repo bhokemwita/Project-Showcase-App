@@ -67,13 +67,11 @@ function ProductCard({product}) {
 
         {/* Product Price */}
         <h3 className="text-3xl font-bold text-indigo-600 mb-6">
-          ${product.price}
+          Price: ${product.price}
         </h3>
-
-       
       </div>
     </div>
-  );
+  )
 }
 
 export default ProductCard;

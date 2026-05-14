@@ -6,6 +6,7 @@ import Landing from "./pages/Landing";
 import ProductProvider from "./context/Products/ProductProvider";
 import AdminPortal from "./pages/AdminPortal";
 import NotFound from "./pages/NotFound";
+import AddProduct from "./pages/AddProduct"
 import './App.css';
 
 function App() {
@@ -16,9 +17,10 @@ function App() {
             <div>
               <Routes>
                 <Route path="/" element={<Landing />} />
-                <Route path="/products" element={<ProductPage />} />
-                <Route path="/contactUs" element={<ContactUs />} />
+                <Route path="/ProductPage" element={<ProductPage />} />
+                <Route path="/ContactUs" element={<ContactUs />} />
                 <Route path="/Admin" element={<AdminPortal />} />
+                <Route path="/AddProduct" element={<AddProduct />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

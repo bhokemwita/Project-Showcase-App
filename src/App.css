@@ -284,3 +284,8 @@
 .section-copy {
   color: rgba(226, 232, 240, 0.78);
 }
+
+#minList{
+  display: grid;
+
+}
