@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
-import AdminPortal from "./AdminPortal"
+// import AdminPortal from "./AdminPortal"
 
 function ProductPage() {
   const [products, setProducts] = useState([]);
+  
 
   const API_URL = " https://fakestoreapi.com/products";
   // Fetch products
@@ -17,7 +18,7 @@ function ProductPage() {
 
   // Delete product
   function handleDelete(id) {
-    
+
     const updatedProducts = products.filter(
       (product) => product.id !== id
     );
@@ -25,7 +26,7 @@ function ProductPage() {
     setProducts(updatedProducts);
   }
 
-  
+
   // Update price
   function handleUpdatePrice(id, newPrice) {
     const updatedProducts = products.map((product) =>
@@ -39,7 +40,7 @@ function ProductPage() {
 
   return (
     <div className="p-6">
-      
+
       {/* Page Title */}
       <h1 className="text-4xl font-bold mb-8">
         Product Dashboard
@@ -50,17 +51,17 @@ function ProductPage() {
 
         {products.map((product) => (
           <>
-          <ProductCard
-            key={product.id}
-            product={product}
-            onDelete={handleDelete}
-            onUpdatePrice={handleUpdatePrice}
-          />
-          <AdminPortal 
-          key={product.id}
-          product={product}
-          length={product.length}
-              onDelete={handleDelete} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              onDelete={handleDelete}
+              onUpdatePrice={handleUpdatePrice}
+            />
+            {/* <AdminPortal
+              key={product.id}
+              product={product}
+              length={product.length}
+              onDelete={handleDelete} /> */}
           </>
         ))}
 

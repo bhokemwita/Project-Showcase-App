@@ -1,10 +1,10 @@
 // import React from "react";
 import {Route, Routes} from "react-router-dom";
-// import {Home} from "./pages/Home";
-// import {About} from "./pages/About";
-// import {Landing} from "./pages/Landing";
-import {ProductProvider} from "./context/ProductContext";
-import {AdminPortal} from "./pages/AdminPortal";
+import ProductPage from "./pages/ProductPage";
+import ContactUs from "./pages/Contact-Us";
+import Landing from "./pages/Landing";
+import ProductProvider from "./context/Products/ProductContext";
+// import AdminPortal from "./pages/AdminPortal";
 import './App.css';
 
 function App() {
@@ -12,10 +12,10 @@ function App() {
     <ProductProvider>
       <div className="App">
         <Routes>
-          {/* <Route path="/" element={<Landing />} /> */}
-          {/* <Route path="/home" element={<Home />} /> */}
-          {/* <Route path="/about" element={<About />} /> */}
-          <Route path="/admin" element={<AdminPortal />} />
+           <Route path="/" element={<Landing />} /> 
+           <Route path="/Home" element={<ProductPage />} /> 
+           <Route path="/About" element={<ContactUs/>} /> 
+          {/* <Route path="/Admin" element={<AdminPortal />} /> */}
         </Routes>
       </div>
     </ProductProvider>
@@ -23,30 +23,4 @@ function App() {
 } 
 
 export default App
-
-// function App() {
-//   const [showSplash, setShowSplash] = useState(true);
-
-//   useEffect(() => {
-//     if 
-//     // will add code here
-  
-    
-
-//   return (
-//     <BrowserRouter>
-      
-//         <div className="app-shell">
-//           <div className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`} aria-hidden={!showSplash}>
-//             <div className="splash-copy">
-//               <span>Commerce</span>
-//               <span>Admin</span>
-//             </div>
-//           </div>
-     
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
 

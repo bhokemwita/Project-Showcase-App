@@ -6,14 +6,14 @@ function AddProduct() {
     title: "",
     price: "",
     category: "",
-    brand: "",
+    brand: "", //
     stock: "",
     rating: "",
     image: "",
     description: "",
-    status: "",
-    sku: "",
-    discount: ""
+    status: "", //
+    sku: "", //
+    discount: "" //
   })
 
   function handleChange(e) {
@@ -32,7 +32,12 @@ function AddProduct() {
       .then(data => {
         alert("Product added successfully!")
         setFormData({ title: "", price: "", category: "", brand: "", stock: "", rating: "", image: "", description: "", status: "", sku: "", discount: "" })
+      //**** */
+      
+        return data
       })
+
+      // .catch(console.error)
   }
 
   return (
