@@ -60,7 +60,7 @@ function ProductPage() {
           key={product.id}
           product={product}
           length={product.length}
-          onDelete={handleDelete}/>
+              onDelete={handleDelete} />
           </>
         ))}
 
