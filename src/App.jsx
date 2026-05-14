@@ -1,5 +1,5 @@
 // import React from "react";
-import {BrowserRouter as Route, Routes} from "react-router-dom";
+import {BrowserRouter , Route, Routes} from "react-router-dom";
 // import {Home} from "./pages/Home";
 import {About} from "./pages/About";
 // import {Landing} from "./pages/Landing";
@@ -20,16 +20,31 @@ function App() {
       </div>
     </ProductProvider>
   );
+} 
+
+function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    if 
+    // will add code here
+  
+    
+
+  return (
+    <BrowserRouter>
+      
+        <div className="app-shell">
+          <div className={`splash-screen ${showSplash ? 'is-visible' : 'is-hidden'}`} aria-hidden={!showSplash}>
+            <div className="splash-copy">
+              <span>Commerce</span>
+              <span>Admin</span>
+            </div>
+          </div>
+     
+    </BrowserRouter>
+  );
 }
+
 export default App;
 
-// import ProductPage from "./pages/ProductPage";
-// function App({ products }) {
-//   return (
-//     <div>
-//       <ProductPage products={products} />
-//     </div>
-//   );
-// }
-
-// export default App;
