@@ -1,10 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
-import Landing from './pages/Landing';
-import ProductProvider from './context/ProductContext';  
-import AdminPortal from './pages/AdminPortal'; 
-import Footer from './components/Footer';
+<<<<<<< HEAD
+import React from "react";
+import {Route, Routes} from "react-router-dom";
+import {Home} from "./pages/Home";
+import {About} from "./pages/About";
+import {Landing} from "./pages/Landing";
+import {ProductProvider} from "./context/ProductContext";
+import {AdminPortal} from "./pages/AdminPortal";
 import './App.css';
 
 function App() {
@@ -23,3 +24,16 @@ function App() {
   );
 }
 export default App;
+
+=======
+import ProductPage from "./pages/ProductPage";
+function App({ products }) {
+  return (
+    <div>
+      <ProductPage products={products} />
+    </div>
+  );
+}
+
+export default App;
+>>>>>>> 9abf09a8c481f8f0ea98cc897d8fa2a9d904c27c
