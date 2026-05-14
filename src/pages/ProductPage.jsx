@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
-import ProductCard from "../components/ProductCard";
+import { useContext } from "react";
+import ProductContext from "../context/Products/ProductContext";
 // import AdminPortal from "./AdminPortal"
+import ProductCard from "../components/ProductCard"
+
 
 function ProductPage() {
-  const [products, setProducts] = useState([]);
-  
+  const [products, setProducts] = useContext(ProductContext);
 
-  const API_URL = " https://fakestoreapi.com/products";
-  // Fetch products
-  useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      });
-  }, []);
 
   // Delete product
   function handleDelete(id) {

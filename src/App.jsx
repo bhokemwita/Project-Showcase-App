@@ -3,7 +3,7 @@ import {Route, Routes} from "react-router-dom";
 import ProductPage from "./pages/ProductPage";
 import ContactUs from "./pages/Contact-Us";
 import Landing from "./pages/Landing";
-import ProductProvider from "./context/Products/ProductContext";
+import ProductProvider from "./context/Products/ProductProvider";
 // import AdminPortal from "./pages/AdminPortal";
 import './App.css';
 
