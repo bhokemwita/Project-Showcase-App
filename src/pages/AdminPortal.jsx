@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import ProductContext from "../context/Products/ProductContext"
+import ProductContext from '../context/Products/ProductContext'
 import Navbar from '../components/Navbar'
 
 function AdminPortal() {
@@ -15,260 +15,313 @@ function AdminPortal() {
     image: '',
   })
 
-    async function handleDelete(product) {
-      if (!window.confirm(`Are you sure you want to delete ${product.title}?`)) {
-        return
-      }
-
-      try {
-        const response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
-          method: 'DELETE'
-        })
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`)
-        }
-
-        await response.json()
-        setProducts(products.filter((item) => item.id !== product.id))
-        alert('Product deleted successfully!')
-      } catch (error) {
-        console.error('Failed to delete product:', error)
-        alert('Could not delete product. Please try again.')
-      }
+  async function handleDelete(product) {
+    if (!window.confirm(`Are you sure you want to delete ${product.title}?`)) {
+      return
     }
 
-    function handleEdit(product) {
-      setEditingProduct(product)
-      setFormValues({
-        title: product.title || '',
-        price: product.price?.toString() || '',
-        category: product.category || '',
-        description: product.description || '',
-        stock: product.stock?.toString() || '',
-        image: product.image || ''
+    try {
+      const response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
+        method: 'DELETE'
       })
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
 
-    function handleChange(e) {
-      const { name, value } = e.target
-      setFormValues((prev) => ({ ...prev, [name]: value }))
-    }
-
-    async function editProduct(e) {
-      e.preventDefault()
-
-      if (!editingProduct) {
-        return
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
       }
 
-      try {
-        const updatedProduct = {
-          ...editingProduct,
-          title: formValues.title,
-          price: parseFloat(formValues.price) || 0,
-          category: formValues.category,
-          description: formValues.description,
-          stock: parseInt(formValues.stock, 10) || 0,
-          image: formValues.image
-        }
+      await response.json()
+      setProducts(products.filter((item) => item.id !== product.id))
+      alert('Product deleted successfully!')
+    } catch (error) {
+      console.error('Failed to delete product:', error)
+      alert('Could not delete product. Please try again.')
+    }
+  }
 
-        const response = await fetch(`https://fakestoreapi.com/products/${editingProduct.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updatedProduct)
-        })
+  function handleEdit(product) {
+    setEditingProduct(product)
+    setFormValues({
+      title: product.title || '',
+      price: product.price?.toString() || '',
+      category: product.category || '',
+      description: product.description || '',
+      stock: product.stock?.toString() || '',
+      image: product.image || ''
+    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`)
-        }
+  function handleChange(e) {
+    const { name, value } = e.target
+    setFormValues((prev) => ({ ...prev, [name]: value }))
+  }
 
-        const data = await response.json()
-        const finalProduct = {
-          ...editingProduct,
-          ...data,
-          stock: updatedProduct.stock,
-          category: updatedProduct.category,
-          description: updatedProduct.description,
-          image: updatedProduct.image
-        }
+  async function editProduct(e) {
+    e.preventDefault()
 
-        setProducts(products.map((product) =>
-          product.id === editingProduct.id ? finalProduct : product
-        ))
-        setEditingProduct(null)
-        alert('Product updated successfully!')
-      } catch (error) {
-        console.error('Failed to update product:', error)
-        alert('Could not update product. Please try again.')
-      }
+    if (!editingProduct) {
+      return
     }
 
-    function handleCancelEdit() {
+    try {
+      const updatedProduct = {
+        ...editingProduct,
+        title: formValues.title,
+        price: parseFloat(formValues.price) || 0,
+        category: formValues.category,
+        description: formValues.description,
+        stock: parseInt(formValues.stock, 10) || 0,
+        image: formValues.image
+      }
+
+      const response = await fetch(`https://fakestoreapi.com/products/${editingProduct.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedProduct)
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      const finalProduct = {
+        ...editingProduct,
+        ...data,
+        stock: updatedProduct.stock,
+        category: updatedProduct.category,
+        description: updatedProduct.description,
+        image: updatedProduct.image
+      }
+
+      setProducts(products.map((product) =>
+        product.id === editingProduct.id ? finalProduct : product
+      ))
       setEditingProduct(null)
+      alert('Product updated successfully!')
+    } catch (error) {
+      console.error('Failed to update product:', error)
+      alert('Could not update product. Please try again.')
+    }
+  }
+
+  function handleCancelEdit() {
+    setEditingProduct(null)
+  }
+
+  function getStock(product) {
+    return Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12
+  }
+
+  function getStockStatus(product) {
+    const stock = getStock(product)
+
+    if (stock === 0) {
+      return 'Out of Stock'
     }
 
-    return (
-        <>
-        <Navbar />
-        <div className="p-6 page-panel">
-            <h1 className="text-4xl font-bold mb-8">Admin Portal</h1> 
-            <Link
-                        to='/AddProduct'
-                        className="w-full bg-gray-200 hover:bg-gray-300 text-center py-3 rounded-xl font-medium transition"
-                    >
-                       <button> Add new Product</button>
-                    </Link>
-            
+    if (stock <= 10) {
+      return 'Low Stock'
+    }
 
-            {editingProduct && (
-              <div className="mb-8 admin-edit-panel p-6">
-                <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
-                <form onSubmit={editProduct} className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input
-                      type="text"
-                      name="title"
-                      value={formValues.title}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+    return 'Ready to Ship'
+  }
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                    <input
-                      type="number"
-                      name="price"
-                      value={formValues.price}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+  function formatPrice(price) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(Number(price) || 0)
+  }
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <input
-                      type="text"
-                      name="category"
-                      value={formValues.category}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+  return (
+    <>
+      <Navbar />
+      <main className="admin-page">
+        <section className="admin-header">
+          <div>
+            <span className="eyebrow">Inventory studio</span>
+            <h1>Admin Portal</h1>
+            <p>Review product availability, update details, and keep the collection presentation polished.</p>
+          </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                    <input
-                      type="number"
-                      name="stock"
-                      value={formValues.stock}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+          <Link to="/AddProduct" className="button button-primary">
+            Add Product
+          </Link>
+        </section>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea
-                      name="description"
-                      value={formValues.description}
-                      onChange={handleChange}
-                      rows="3"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+        <section className="admin-overview" aria-label="Inventory summary">
+          <div>
+            <span>{products.length}</span>
+            <p>Total products</p>
+          </div>
+          <div>
+            <span>{products.filter((product) => getStock(product) <= 10).length}</span>
+            <p>Need attention</p>
+          </div>
+          <div>
+            <span>{products.filter((product) => getStock(product) > 10).length}</span>
+            <p>Ready to ship</p>
+          </div>
+        </section>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                    <input
-                      type="text"
-                      name="image"
-                      value={formValues.image}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2 flex gap-3">
-                    <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-medium transition">
-                      Save Changes
-                    </button>
-                    <button type="button" onClick={handleCancelEdit} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-medium transition">
-                      Cancel
-                    </button>
-                  </div>
-                </form>
+        {editingProduct && (
+          <section className="admin-edit-panel">
+            <div className="admin-section-heading">
+              <div>
+                <span className="eyebrow">Editing</span>
+                <h2>{editingProduct.title}</h2>
               </div>
-            )}
-
-            <ul id='minList' className="admin-grid">
-                {products.map((product) => (
-                <li key={product.id} className='product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300'>
-            <img src={product?.image} alt={product?.title} className="w-full h-60 object-cover"/>
-            
-
-            {/* Content */}
-            <div className="product-card-content p-5">
-
-                {/* Product Title */}
-                <h2 className="text-2xl font-bold mb-2">{product?.title}</h2>
-
-                {/* Category */}
-                <p className="text-gray-500 mb-3">{product?.category}</p>
-
-                {/* Description */}
-                <p className="text-gray-600 mb-4">{product?.description}</p>
-
-                {/* Stock */}
-                <div className="flex justify-between items-center mb-4">
-                    <span className="font-semibold">Stock:</span>
-                    <span>{product?.stock || 0}</span>
-                </div>
-
-                {/* Stock Badge */}
-                <div className="mb-5">
-                    <span
-                        className={`px-3 py-1 rounded-full text-white text-sm ${(product.stock || 0) === 0
-                            ? "bg-red-500"
-                            : (product.stock || 0) <= 10
-                                ? "bg-yellow-500"
-                                : "bg-green-500"
-                            }`}>
-                        {(product.stock || 0) === 0 ? "Out of Stock" : (product.stock || 0) <= 10 ? "Low Stock" : "In Stock"}
-                    </span>
-                </div>
-
-                <h3 className="text-3xl font-bold text-indigo-600 mb-6">
-                    Price: ${product?.price}
-                </h3>
-
-                <div className="flex gap-4">
-                    <button
-                        onClick={() => handleEdit(product)}
-                        className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        onClick={() => handleDelete(product)}
-                        className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition"
-                    >
-                        Delete
-                    </button>
-                </div>
+              <button type="button" className="button button-secondary" onClick={handleCancelEdit}>
+                Cancel
+              </button>
             </div>
-        </li>
-            ))}
-            </ul>
-        </div>
-        </>
-        )
+
+            <form onSubmit={editProduct} className="admin-form">
+              <label>
+                <span>Title</span>
+                <input
+                  type="text"
+                  name="title"
+                  value={formValues.title}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label>
+                <span>Price</span>
+                <input
+                  type="number"
+                  name="price"
+                  value={formValues.price}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label>
+                <span>Category</span>
+                <input
+                  type="text"
+                  name="category"
+                  value={formValues.category}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label>
+                <span>Stock</span>
+                <input
+                  type="number"
+                  name="stock"
+                  value={formValues.stock}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <label className="admin-form-wide">
+                <span>Description</span>
+                <textarea
+                  name="description"
+                  value={formValues.description}
+                  onChange={handleChange}
+                  rows="4"
+                />
+              </label>
+
+              <label className="admin-form-wide">
+                <span>Image URL</span>
+                <input
+                  type="text"
+                  name="image"
+                  value={formValues.image}
+                  onChange={handleChange}
+                />
+              </label>
+
+              <div className="admin-form-actions">
+                <button type="submit" className="button button-primary">
+                  Save Changes
+                </button>
+                <button type="button" onClick={handleCancelEdit} className="button button-secondary">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        <section className="admin-inventory">
+          <div className="admin-section-heading">
+            <div>
+              <span className="eyebrow">Collection control</span>
+              <h2>Inventory</h2>
+            </div>
+            <p>{products.length} products currently listed</p>
+          </div>
+
+          <ul className="admin-grid">
+            {products.map((product) => {
+              const stock = getStock(product)
+              const status = getStockStatus(product)
+
+              return (
+                <li key={product.id} className="admin-product-card">
+                  <div className="admin-product-media">
+                    <span className={`stock-pill ${stock === 0 ? 'stock-out' : stock <= 10 ? 'stock-low' : 'stock-ready'}`}>
+                      {status}
+                    </span>
+                    <img src={product?.image} alt={product?.title} />
+                  </div>
+
+                  <div className="admin-product-body">
+                    <div className="product-card-kicker">
+                      <span>{product?.category || 'Uncategorized'}</span>
+                      <span>{product?.brand || 'Curated'}</span>
+                    </div>
+
+                    <h3>{product?.title}</h3>
+                    <p>{product?.description}</p>
+
+                    <div className="admin-product-meta">
+                      <div>
+                        <span className="meta-label">Stock</span>
+                        <strong>{stock} units</strong>
+                      </div>
+                      <div>
+                        <span className="meta-label">Price</span>
+                        <strong>{formatPrice(product?.price)}</strong>
+                      </div>
+                    </div>
+
+                    <div className="admin-card-actions">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(product)}
+                        className="button button-secondary"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(product)}
+                        className="button button-danger"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      </main>
+    </>
+  )
 }
 
 export default AdminPortal
