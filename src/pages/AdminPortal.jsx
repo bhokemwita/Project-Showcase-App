@@ -116,7 +116,13 @@ function AdminPortal() {
         <Navbar />
         <div className="p-6 page-panel">
             <h1 className="text-4xl font-bold mb-8">Admin Portal</h1> 
-            <button> Add new Product</button>
+            <Link
+                        to='/AddProduct'
+                        className="w-full bg-gray-200 hover:bg-gray-300 text-center py-3 rounded-xl font-medium transition"
+                    >
+                       <button> Add new Product</button>
+                    </Link>
+            
 
             {editingProduct && (
               <div className="mb-8 admin-edit-panel p-6">
@@ -255,13 +261,6 @@ function AdminPortal() {
                     >
                         Delete
                     </button>
-
-                    <Link
-                        to='/AddProduct'
-                        className="w-full bg-gray-200 hover:bg-gray-300 text-center py-3 rounded-xl font-medium transition"
-                    >
-                       
-                    </Link>
                 </div>
             </div>
         </li>
