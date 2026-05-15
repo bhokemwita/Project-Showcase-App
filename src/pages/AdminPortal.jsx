@@ -114,11 +114,18 @@ function AdminPortal() {
     return (
         <>
         <Navbar />
-        <div className="p-6">
-            <h1 className="text-4xl font-bold mb-8">Admin Portal</h1>
+        <div className="p-6 page-panel">
+            <h1 className="text-4xl font-bold mb-8">Admin Portal</h1> 
+            <Link
+                        to='/AddProduct'
+                        className="w-full bg-gray-200 hover:bg-gray-300 text-center py-3 rounded-xl font-medium transition"
+                    >
+                       <button> Add new Product</button>
+                    </Link>
+            
 
             {editingProduct && (
-              <div className="mb-8 bg-white rounded-2xl shadow-lg p-6">
+              <div className="mb-8 admin-edit-panel p-6">
                 <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
                 <form onSubmit={editProduct} className="grid gap-4 md:grid-cols-2">
                   <div>
@@ -199,14 +206,14 @@ function AdminPortal() {
               </div>
             )}
 
-            <ul id='minList' className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ul id='minList' className="admin-grid">
                 {products.map((product) => (
-                <li key={product.id} className='bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300'>
+                <li key={product.id} className='product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300'>
             <img src={product?.image} alt={product?.title} className="w-full h-60 object-cover"/>
             
 
             {/* Content */}
-            <div className="p-5">
+            <div className="product-card-content p-5">
 
                 {/* Product Title */}
                 <h2 className="text-2xl font-bold mb-2">{product?.title}</h2>
@@ -240,7 +247,7 @@ function AdminPortal() {
                     Price: ${product?.price}
                 </h3>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                     <button
                         onClick={() => handleEdit(product)}
                         className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition"
@@ -254,13 +261,6 @@ function AdminPortal() {
                     >
                         Delete
                     </button>
-
-                    <Link
-                        to='/AddProduct'
-                        className="w-full bg-gray-200 hover:bg-gray-300 text-center py-3 rounded-xl font-medium transition"
-                    >
-                        Add new Product
-                    </Link>
                 </div>
             </div>
         </li>
