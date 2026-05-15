@@ -1,313 +1,226 @@
-import { useRef, useState } from 'react'
+import { useContext, useState } from 'react'
+import { Link } from 'react-router-dom'
+import ProductContext from "../context/Products/ProductContext"
+import Navbar from '../components/Navbar'
 
-export function AdminPortal({ product, onDelete, length }) {
-    const [price, setPrice] = useState(product.price);
-    const [array, setArray] = useState(newProductArray)
-    const CatRef = useRef("");
-    const NameRef = useRef("");
-    const PriceRef = useRef("");
-    const DesRef = useRef("");
-    const ImageRef = useRef("");
-    const StockRef = useRef("");
+function AdminPortal() {
+  const [products, setProducts] = useContext(ProductContext)
+  const [editingProduct, setEditingProduct] = useState(null)
+  const [formValues, setFormValues] = useState({
+    title: '',
+    price: '',
+    category: '',
+    description: '',
+    stock: '',
+    image: '',
+  })
 
-    // Example Product Object inside an Array
-    let newProductArray = [
-        {
-            id: length + 1,
-            title: "Classic Black Hoodie",
-            price: 45.99,
-            description: "Premium oversized hoodie for everyday wear.",
-            category: "men's clothing",
-            image: "https://i.pravatar.cc",
-            stock: 15
-        }
-    ]
+    async function handleDelete(product) {
+      if (!window.confirm(`Are you sure you want to delete ${product.title}?`)) {
+        return
+      }
 
-    // Stock Status
-    function stockStatus() {
+      try {
+        const response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
+          method: 'DELETE'
+        })
 
-        if ((product.stock || 0) === 0) {
-            return "Out of Stock";
-        }
-
-        if ((product.stock || 0) <= 10) {
-            return "Low Stock";
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
         }
 
-        return "In Stock";
+        await response.json()
+        setProducts(products.filter((item) => item.id !== product.id))
+        alert('Product deleted successfully!')
+      } catch (error) {
+        console.error('Failed to delete product:', error)
+        alert('Could not delete product. Please try again.')
+      }
     }
 
-    //Edit Form 
-
-    function handleEdit(){
-        const handleSubmit = (event) => {
-            console.log(event.target.value)
-        }
-        return(
-            <form
-                            onSubmit={handleSubmit}
-                            className="flex flex-col gap-3 mb-5"
-                        >
-
-                            <label>Category</label>
-                            <input
-                                type="text"
-                                name="category"
-                                className="border p-2 rounded"
-                                placeholder={product.category}
-                            />
-
-                            <label>Name of Product</label>
-                            <input
-                                type="text"
-                                name="title"
-                                className="border p-2 rounded"
-                                placeholder={product.title}
-                            />
-
-                            <label>Price of Product</label>
-                            <input
-                                type="number"
-                                name="price"
-                                className="border p-2 rounded"
-                                placeholder={product.price}
-                            />
-
-                            <label>Description of Product</label>
-                            <input
-                                type="text"
-                                name="description"
-                                className="border p-2 rounded"
-                                placeholder={product.description}
-                            />
-
-                            <label>Image URL</label>
-                            <input
-                                type="text"
-                                name="image"
-                                className="border p-2 rounded"
-                                placeholder={product.image}
-                            />
-
-                            <label>Stock</label>
-                            <input
-                                type="number"
-                                name="stock"
-                                className="border p-2 rounded"
-                                placeholder={product.stock}
-                            />
-
-                            <button
-                                type="submit"
-                                className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
-                            >
-                                Save Changes
-                            </button>
-
-                        </form>
-        )
+    function handleEdit(product) {
+      setEditingProduct(product)
+      setFormValues({
+        title: product.title || '',
+        price: product.price?.toString() || '',
+        category: product.category || '',
+        description: product.description || '',
+        stock: product.stock?.toString() || '',
+        image: product.image || ''
+      })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
-    // Deletion from API
-    async function handleDelete() {
-
-        if (!window.confirm(`Are you sure you want to delete ${product.title}?`)) {
-            return;
-        }
-
-        try {
-
-            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            let data = await response.json();
-
-            console.log("Deleted from server:", data);
-
-            onDelete(product.id);
-
-        } catch (error) {
-
-            console.error("Failed to delete product:", error);
-            alert("Could not delete product. Please try again.");
-        }
+    function handleChange(e) {
+      const { name, value } = e.target
+      setFormValues((prev) => ({ ...prev, [name]: value }))
     }
 
-    // Adding Product to API
-    async function addProduct() {
+    async function editProduct(e) {
+      e.preventDefault()
 
-        let newObject = {
-            category : CatRef,
-            title: NameRef,
-            price: PriceRef,
-            description: DesRef,
-            image: ImageRef,
-            stock: StockRef,
-        }
-            newProductArray.push({newObject})        
+      if (!editingProduct) {
+        return
+      }
 
-        let newProduct = array[0]
-
-        try {
-
-            let response = await fetch(`https://fakestoreapi.com/products/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newProduct)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            let data = await response.json();
-            setArray([])
-            
-
-            console.log(data)
-
-        } catch (error) {
-
-            console.error(error);
+      try {
+        const updatedProduct = {
+          ...editingProduct,
+          title: formValues.title,
+          price: parseFloat(formValues.price) || 0,
+          category: formValues.category,
+          description: formValues.description,
+          stock: parseInt(formValues.stock, 10) || 0,
+          image: formValues.image
         }
 
-        return(
-            <form
-                            onSubmit={addProduct}
-                            className="flex flex-col gap-3 mb-5"
-                        >
+        const response = await fetch(`https://fakestoreapi.com/products/${editingProduct.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedProduct)
+        })
 
-                            <label>Category</label>
-                            <input
-                                type="text"
-                                name="category"
-                                ref={CatRef}
-                                className="border p-2 rounded"
-                            />
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
 
-                            <label>Name of Product</label>
-                            <input
-                                type="text"
-                                name="title"
-                                ref={NameRef}
-                                className="border p-2 rounded"
-                            />
+        const data = await response.json()
+        const finalProduct = {
+          ...editingProduct,
+          ...data,
+          stock: updatedProduct.stock,
+          category: updatedProduct.category,
+          description: updatedProduct.description,
+          image: updatedProduct.image
+        }
 
-                            <label>Price of Product</label>
-                            <input
-                                type="number"
-                                name="price"
-                                ref={PriceRef}
-                                className="border p-2 rounded"
-                            />
-
-                            <label>Description of Product</label>
-                            <input
-                                type="text"
-                                name="description"
-                                ref={DesRef}
-                                className="border p-2 rounded"
-                            />
-
-                            <label>Image URL</label>
-                            <input
-                                type="text"
-                                name="image"
-                                ref={ImageRef}
-                                className="border p-2 rounded"
-                            />
-
-                            <label>Stock</label>
-                            <input
-                                type="number"
-                                name="stock"
-                                ref={StockRef}
-                                className="border p-2 rounded"
-                            />
-
-                            <button
-                                type="submit"
-                                className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
-                            >
-                                Save Changes
-                            </button>
-
-                        </form>
-        )
+        setProducts(products.map((product) =>
+          product.id === editingProduct.id ? finalProduct : product
+        ))
+        setEditingProduct(null)
+        alert('Product updated successfully!')
+      } catch (error) {
+        console.error('Failed to update product:', error)
+        alert('Could not update product. Please try again.')
+      }
     }
 
-    // Edit Product
-    async function editProduct() {
-
-        try {
-
-            let updatedProduct = {
-                ...product,
-                price: price
-            }
-
-            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedProduct)
-            })
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`)
-            }
-
-            let data = await response.json()
-
-            console.log("Updated Product:", data)
-
-        } catch (error) {
-
-            console.error(error)
-        }
+    function handleCancelEdit() {
+      setEditingProduct(null)
     }
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+        <>
+        <Navbar />
+        <div className="p-6">
+            <h1 className="text-4xl font-bold mb-8">Admin Portal</h1>
 
-            {/* Product Image */}
-            <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-60 object-cover"
-            />
+            {editingProduct && (
+              <div className="mb-8 bg-white rounded-2xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
+                <form onSubmit={editProduct} className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formValues.title}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                    <input
+                      type="number"
+                      name="price"
+                      value={formValues.price}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <input
+                      type="text"
+                      name="category"
+                      value={formValues.category}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                    <input
+                      type="number"
+                      name="stock"
+                      value={formValues.stock}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      name="description"
+                      value={formValues.description}
+                      onChange={handleChange}
+                      rows="3"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                    <input
+                      type="text"
+                      name="image"
+                      value={formValues.image}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 flex gap-3">
+                    <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-medium transition">
+                      Save Changes
+                    </button>
+                    <button type="button" onClick={handleCancelEdit} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-medium transition">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <ul id='minList' className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map((product) => (
+                <li key={product.id} className='bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300'>
+            <img src={product?.image} alt={product?.title} className="w-full h-60 object-cover"/>
+            
 
             {/* Content */}
             <div className="p-5">
 
                 {/* Product Title */}
-                <h2 className="text-2xl font-bold mb-2">
-                    {product.title}
-                </h2>
+                <h2 className="text-2xl font-bold mb-2">{product?.title}</h2>
 
                 {/* Category */}
-                <p className="text-gray-500 mb-3">
-                    {product.category}
-                </p>
+                <p className="text-gray-500 mb-3">{product?.category}</p>
 
                 {/* Description */}
-                <p className="text-gray-600 mb-4">
-                    {product.description}
-                </p>
+                <p className="text-gray-600 mb-4">{product?.description}</p>
 
                 {/* Stock */}
                 <div className="flex justify-between items-center mb-4">
-                    <span className="font-semibold">
-                        Stock:
-                    </span>
-
-                    <span>{product.stock || 0}</span>
+                    <span className="font-semibold">Stock:</span>
+                    <span>{product?.stock || 0}</span>
                 </div>
 
                 {/* Stock Badge */}
@@ -318,160 +231,44 @@ export function AdminPortal({ product, onDelete, length }) {
                             : (product.stock || 0) <= 10
                                 ? "bg-yellow-500"
                                 : "bg-green-500"
-                            }`}
-                    >
-                        {stockStatus()}
+                            }`}>
+                        {(product.stock || 0) === 0 ? "Out of Stock" : (product.stock || 0) <= 10 ? "Low Stock" : "In Stock"}
                     </span>
                 </div>
 
-                {/* Price Update */}
-                <div className="flex gap-2 mb-5">
-                    <input
-                        type="number"
-                        value={price}
-                        onChange={(e) =>
-                            setPrice(e.target.value)
-                        }
-                        className="border border-gray-300 rounded-lg px-3 py-2 w-full outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-
-                    <button
-                        onClick={editProduct}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-lg transition"
-                    >
-                        Update
-                    </button>
-                </div>
-
-                {/* Product Price */}
                 <h3 className="text-3xl font-bold text-indigo-600 mb-6">
-                    ${price}
+                    Price: ${product?.price}
                 </h3>
 
-                {/* Action Buttons */}
                 <div className="flex gap-3">
-
-                    <button 
-                    onClick={handleEdit}
-                    className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition">
+                    <button
+                        onClick={() => handleEdit(product)}
+                        className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition"
+                    >
                         Edit
                     </button>
 
                     <button
-                        onClick={handleDelete}
+                        onClick={() => handleDelete(product)}
                         className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition"
                     >
                         Delete
                     </button>
 
-                    <button
-                        onClick={addProduct}
-                        className="w-full bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-medium transition">
+                    <Link
+                        to='/AddProduct'
+                        className="w-full bg-gray-200 hover:bg-gray-300 text-center py-3 rounded-xl font-medium transition"
+                    >
                         Add new Product
-                    </button>
-
+                    </Link>
                 </div>
             </div>
+        </li>
+            ))}
+            </ul>
         </div>
-    );
+        </>
+        )
 }
 
-
-// Example fetch requests using useEffect
-
-/*
-
-DELETE
-
-useEffect(() => {
-
-    async function deleteProduct() {
-
-        try {
-
-            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
-                method: 'DELETE'
-            })
-
-            let data = await response.json()
-
-            console.log(data)
-
-        } catch(error) {
-
-            console.error(error)
-        }
-    }
-
-    deleteProduct()
-
-}, [])
-
-
-
-POST
-
-useEffect(() => {
-
-    async function addProduct() {
-
-        try {
-
-            let response = await fetch(`https://fakestoreapi.com/products`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(sampleProducts[0])
-            })
-
-            let data = await response.json()
-
-            console.log(data)
-
-        } catch(error) {
-
-            console.error(error)
-        }
-    }
-
-    addProduct()
-
-}, [])
-
-
-
-PUT
-
-useEffect(() => {
-
-    async function updateProduct() {
-
-        try {
-
-            let response = await fetch(`https://fakestoreapi.com/products/${product.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ...product,
-                    price: price
-                })
-            })
-
-            let data = await response.json()
-
-            console.log(data)
-
-        } catch(error) {
-
-            console.error(error)
-        }
-    }
-
-    updateProduct()
-
-}, [])
-
-*/
+export default AdminPortal

@@ -1,71 +1,137 @@
-import { useEffect, useState } from "react";
+import { useState, useContext } from "react";
+import ProductContext from "../context/Products/ProductContext";
 import ProductCard from "../components/ProductCard";
-import AdminPortal from "./AdminPortal"
+import Navbar from "../components/Navbar";
 
 function ProductPage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useContext(ProductContext);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const API_URL = " https://fakestoreapi.com/products";
-  // Fetch products
-  useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      });
-  }, []);
+  const categories = [...new Set(products.map((product) => product.category).filter(Boolean))];
+  const averagePrice = products.length
+    ? products.reduce((total, product) => total + (Number(product.price) || 0), 0) / products.length
+    : 0;
+  const premiumCount = products.filter((product) => Number(product.price) >= averagePrice).length;
 
-  // Delete product
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory = selectedCategory === "" || product.category === selectedCategory;
+    const searchable = `${product.title || ""} ${product.description || ""} ${product.category || ""}`.toLowerCase();
+    const matchesSearch = searchable.includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   function handleDelete(id) {
-    
-    const updatedProducts = products.filter(
-      (product) => product.id !== id
-    );
-
-    setProducts(updatedProducts);
+    setProducts(products.filter((product) => product.id !== id));
   }
 
-  
-  // Update price
   function handleUpdatePrice(id, newPrice) {
-    const updatedProducts = products.map((product) =>
-      product.id === id
-        ? { ...product, price: Number(newPrice) }
-        : product
+    setProducts(
+      products.map((product) =>
+        product.id === id ? { ...product, price: Number(newPrice) } : product
+      )
     );
-
-    setProducts(updatedProducts);
   }
 
   return (
-    <div className="p-6">
-      
-      {/* Page Title */}
-      <h1 className="text-4xl font-bold mb-8">
-        Product Dashboard
-      </h1>
+    <>
+      <Navbar />
+      <main className="catalog-page">
+        <section className="catalog-hero">
+          <div className="hero-content">
+            <span className="eyebrow">Curated essentials</span>
+            <h1>Premium goods for sharper everyday living.</h1>
+            <p>
+              Discover a refined collection of technology, fashion, accessories, and lifestyle pieces selected for quality,
+              performance, and lasting appeal.
+            </p>
+            <div className="hero-actions">
+              <a className="button button-primary" href="#collection">Explore Collection</a>
+              <a className="button button-secondary" href="/Admin">Manage Inventory</a>
+            </div>
+          </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="hero-showcase" aria-label="Featured collection preview">
+            {products.slice(0, 3).map((product) => (
+              <div className="showcase-tile" key={product.id}>
+                <img src={product.image} alt={product.title} />
+                <span>{product.category}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        {products.map((product) => (
-          <>
-          <ProductCard
-            key={product.id}
-            product={product}
-            onDelete={handleDelete}
-            onUpdatePrice={handleUpdatePrice}
-          />
-          <AdminPortal 
-          key={product.id}
-          product={product}
-          length={product.length}
-          onDelete={handleDelete}/>
-          </>
-        ))}
+        <section className="catalog-stats" aria-label="Collection statistics">
+          <div>
+            <span>{products.length}</span>
+            <p>Curated products</p>
+          </div>
+          <div>
+            <span>{categories.length}</span>
+            <p>Categories</p>
+          </div>
+          <div>
+            <span>{premiumCount}</span>
+            <p>Premium picks</p>
+          </div>
+        </section>
 
-      </div>
-    </div>
+        <section id="collection" className="collection-section">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">The collection</span>
+              <h2>Shop the edit</h2>
+            </div>
+            <p>{filteredProducts.length} products matching your selection</p>
+          </div>
+
+          <div className="filter-bar">
+            <label htmlFor="category">
+              <span>Category</span>
+              <select
+                id="category"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </label>
+
+            <label htmlFor="search">
+              <span>Search</span>
+              <input
+                id="search"
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search products, details, or categories"
+              />
+            </label>
+          </div>
+
+          {filteredProducts.length > 0 ? (
+            <div className="products-grid">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onDelete={handleDelete}
+                  onUpdatePrice={handleUpdatePrice}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h3>No products found</h3>
+              <p>Try another search term or clear the selected category.</p>
+            </div>
+          )}
+        </section>
+      </main>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import Navbar from '../components/Navbar';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +32,8 @@ const ContactUs = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="contact-container">
       <div className="contact-wrapper">
         {/* Header Section */}
@@ -147,7 +150,7 @@ const ContactUs = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .contact-container {
           min-height: 100vh;
           background: linear-gradient(135deg, #0a192f 0%, #0b2b3b 100%);
@@ -373,6 +376,7 @@ const ContactUs = () => {
         }
       `}</style>
     </div>
+    </>
   );
 };
 

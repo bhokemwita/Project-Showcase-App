@@ -1,79 +1,61 @@
-function ProductCard({product}) {
+function ProductCard({ product }) {
+  const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12;
+  const rating = typeof product.rating === "object" ? product.rating?.rate : product.rating;
+  const reviewCount = typeof product.rating === "object" ? product.rating?.count : product.sales;
+  const price = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(Number(product.price) || 0);
 
-  // Stock Status
   function stockStatus() {
-    if (product.stock === 0) {
+    if (stock === 0) {
       return "Out of Stock";
     }
 
-    if (product.stock <= 10) {
+    if (stock <= 10) {
       return "Low Stock";
     }
 
-    return "In Stock";
+    return "Ready to Ship";
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-      
-      {/* Product Image */}
-      <img
-        src={product.image}
-        alt={product.title}
-        className="w-full h-60 object-cover"
-      />
-
-      {/* Content */}
-      <div className="p-5">
-
-        {/* Product Title */}
-        <h2 className="text-2xl font-bold mb-2">
-          {product.title}
-        </h2>
-
-        {/* Category */}
-        <p className="text-gray-500 mb-3">
-          {product.category}
-        </p>
-
-        {/* Description */}
-        <p className="text-gray-600 mb-4">
-          {product.description}
-        </p>
-
-        {/* Stock */}
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-semibold">
-            Stock:
-          </span>
-
-          <span>{product.stock}</span>
-        </div>
-
-        {/* Stock Badge */}
-        <div className="mb-5">
-          <span
-            className={`px-3 py-1 rounded-full text-white text-sm ${
-              product.stock === 0
-                ? "bg-red-500"
-                : product.stock <= 10
-                ? "bg-yellow-500"
-                : "bg-green-500"
-            }`}
-          >
-            {stockStatus()}
-          </span>
-        </div>
-
-        {/* Product Price */}
-        <h3 className="text-3xl font-bold text-indigo-600 mb-6">
-          ${product.price}
-        </h3>
-
-       
+    <article className="product-card">
+      <div className="product-media">
+        <span className={`stock-pill ${stock === 0 ? "stock-out" : stock <= 10 ? "stock-low" : "stock-ready"}`}>
+          {stockStatus()}
+        </span>
+        <img src={product.image} alt={product.title} />
       </div>
-    </div>
-  );
+
+      <div className="product-card-body">
+        <div className="product-card-kicker">
+          <span>{product.category}</span>
+          {rating && <span>{rating} stars</span>}
+        </div>
+
+        <h2>{product.title}</h2>
+        <p>{product.description}</p>
+
+        <div className="product-meta">
+          <div>
+            <span className="meta-label">Inventory</span>
+            <strong>{stock} units</strong>
+          </div>
+          <div>
+            <span className="meta-label">Demand</span>
+            <strong>{reviewCount || "New"}</strong>
+          </div>
+        </div>
+
+        <div className="product-card-footer">
+          <strong>{price}</strong>
+          <button type="button">View</button>
+        </div>
+      </div>
+    </article>
+  )
 }
 
 export default ProductCard;
