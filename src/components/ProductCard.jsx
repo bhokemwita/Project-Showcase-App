@@ -28,7 +28,7 @@ function ProductCard({product}) {
 
         {/* Product Title */}
         <h2 className="text-2xl font-bold mb-2">
-         Title: {product.title}
+         {product.title}
         </h2>
 
         {/* Category */}
