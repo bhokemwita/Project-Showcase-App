@@ -14,7 +14,7 @@ function ProductCard({product}) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+    <div className="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
       
       {/* Product Image */}
       <img
@@ -24,21 +24,21 @@ function ProductCard({product}) {
       />
 
       {/* Content */}
-      <div className="p-5">
+      <div className="product-card-content p-5">
 
         {/* Product Title */}
         <h2 className="text-2xl font-bold mb-2">
-          {product.title}
+         Title: {product.title}
         </h2>
 
         {/* Category */}
         <p className="text-gray-500 mb-3">
-          {product.category}
+          Category: {product.category.toUpperCase()}
         </p>
 
         {/* Description */}
         <p className="text-gray-600 mb-4">
-          {product.description}
+          Description: {product.description}
         </p>
 
         {/* Stock */}
@@ -47,7 +47,7 @@ function ProductCard({product}) {
             Stock:
           </span>
 
-          <span>{product.stock}</span>
+          <span> {product.stock}</span>
         </div>
 
         {/* Stock Badge */}
